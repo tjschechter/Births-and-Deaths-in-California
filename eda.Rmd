@@ -1,0 +1,79 @@
+---
+title: "California Births and Deaths, 1960 - 2023"
+author: "Thomas Schechter"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(data.table)
+
+```
+
+## Data - Births
+
+This section is an exploratory look at our birth data from 1960 through 2023.
+
+```{r}
+
+# read in our data on births
+births <- read_csv("data/20241030_births_final_state_month_sup.csv")
+
+# subset to remove those unnecessary and NA cols
+births <- births[,c(1:6)]
+
+```
+
+```{r}
+
+# let's summarize - just how many births occurred in CA from 1960 -2023?
+
+births_oc <- births %>% filter(Geography_Type == "Occurrence")
+
+# how many births occurred per month? per year?
+
+# use groupby() to group and sum
+
+# months
+
+births_oc_m <- births_oc %>% group_by(Month) %>%
+  summarise(
+    "Total Births" = sum(Count)
+  )
+
+# rename the months s.t. they have the month names instead of ordered #s
+
+births_oc_m <- births_oc_m %>% mutate(
+  Month = case_when(
+    Month == "01" ~ "January",
+    Month == "02" ~ "February",
+    Month == "03" ~ "March",
+    Month == "04" ~ "April",
+    Month == "05" ~ "May",
+    Month == "06" ~ "June",
+    Month == "07" ~ "July",
+    Month == "08" ~ "August",
+    Month == "09" ~ "September",
+    Month == "10" ~ "October",
+    Month == "11" ~ "November",
+    Month == "12" ~ "December"
+  )
+)
+
+# use kable packages to create neat, readable tables
+
+#install.packages("kableExtra")
+library(kableExtra)
+
+births_oc_m %>%
+  kable(caption = "Births by Month in CA, 1960 - 2023") %>%
+  kable_styling(full_width = FALSE,
+                position = "center",
+                latex_options = c("striped", "hold_position"))
+
+
+```
+
