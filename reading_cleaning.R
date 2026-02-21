@@ -60,3 +60,7 @@ deaths <- deaths %>% na.omit()
 anyNA(deaths)
 
 # no more missing values!
+
+# export the deaths cleaned data
+
+write.csv(deaths, "death_data_79-23.csv")
