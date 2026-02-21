@@ -77,3 +77,27 @@ births_oc_m %>%
 
 ```
 
+```{r}
+
+# let's compare residence births vs. occurrence births
+# filter s.t we don't get the more granular views after 2018
+
+births_m <- births %>% filter(Geography_Type == "Residence" | Geography_Type == "Occurrence") %>%
+  group_by(Month, Geography_Type) %>%
+  summarise(
+    "Total Births" = sum(Count)
+  )
+
+# And now create a similar table for the comparison
+births_m %>%
+  kable(caption = "Births by Month in CA, 1960 - 2023") %>%
+  kable_styling(full_width = FALSE,
+                position = "center",
+                latex_options = c("striped", "hold_position"))
+
+```
+
+There are fairly similar numbers, with a few thousand typically the difference. This tells us that either:
+* California residents are giving birth out-of-state
+* Non-residents of California are giving birth in California!
+
