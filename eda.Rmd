@@ -179,5 +179,14 @@ There appears to be seasonality in births across the state of California. Let's 
 
 ```{r}
 
-```
+births_c %>%
+  ggplot(aes(x = YearMonth, y = Count)) +
+  geom_line(aes(color = Geography_Type)) +
+  scale_color_discrete() +
+  theme_bw() +
+  ggtitle("All births in CA from 1960 - 2023, by month") +
+  xlab("") +
+  ylab("Total births")
 
+```
+The lines are almost the exact same, which, from parsing our data, is to be expected. Recall that in a previous table, we saw that the overall total of births by month (1960 - 2023) were off by approx. a few thousand each month. Therefore, it's reasonable to expect any given month of a gien year to have a much smaller difference. e.g. the difference between occurrence and residence births in Jan 1960 is 8!
