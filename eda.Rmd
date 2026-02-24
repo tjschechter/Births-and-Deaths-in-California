@@ -104,8 +104,7 @@ There are fairly similar numbers, with a few thousand typically the difference. 
 Next, we can check the distribution or spread of birth counts by month across the years.
 
 ```{r}
-
-births %>% filter(Strata == "Total Population") %>%
+births_c <- births %>% filter(Strata == "Total Population") %>%
   mutate(Month = case_when(
     Month == "01" ~ "January",
     Month == "02" ~ "February",
@@ -118,7 +117,9 @@ births %>% filter(Strata == "Total Population") %>%
     Month == "09" ~ "September",
     Month == "10" ~ "October",
     Month == "11" ~ "November",
-    Month == "12" ~ "December")) %>%
+    Month == "12" ~ "December"))
+
+births_c %>%
   ggplot(aes(x = fct_relevel(
     Month,
     "January", "February", "March", "April",
@@ -134,3 +135,49 @@ births %>% filter(Strata == "Total Population") %>%
 ```
 
 August seems to consistently have higher number of births, while February sees a lower number of births.
+
+```{r}
+
+# create a variable to indicate the date as month and year
+
+#install.packages("zoo")
+
+library(zoo) # library with as.yearmon() function
+
+# Create a date variable - assume the first of the month only for functionality purposes
+# the data is stratified by month
+births_c <- births_c %>%
+  mutate(Date = case_when(
+    Month == "January" ~ paste(Year, "01-01", sep = "-"),
+    Month == "February" ~ paste(Year, "02-01", sep = "-"),
+    Month == "March" ~ paste(Year, "03-01", sep = "-"),
+    Month == "April" ~ paste(Year, "04-01", sep = "-"),
+    Month == "May" ~ paste(Year, "05-01", sep = "-"),
+    Month == "June" ~ paste(Year, "06-01", sep = "-"),
+    Month == "July" ~ paste(Year, "07-01", sep = "-"),
+    Month == "August" ~ paste(Year, "08-01", sep = "-"),
+    Month == "September" ~ paste(Year, "09-01", sep = "-"),
+    Month == "October" ~ paste(Year, "10-01", sep = "-"),
+    Month == "November" ~ paste(Year, "11-01", sep = "-"),
+    Month == "December" ~ paste(Year, "12-01", sep = "-"),
+  ) %>% as.Date()) 
+
+# use zoo package's as.yearmon() fxn to convert into a format we want
+births_c <- births_c %>% mutate(YearMonth = as.yearmon(Date))
+
+# create a line chart to display behavior of "Occurrence" births in california
+births_c %>% filter(Geography_Type == "Occurrence") %>% 
+  ggplot(aes(x = YearMonth, y = Count)) +
+  geom_line() +
+  theme_bw() +
+  ggtitle("Occurrence births in CA from 1960 - 2023, by month") +
+  xlab("") +
+  ylab("Births that occurred in CA")
+
+```
+There appears to be seasonality in births across the state of California. Let's add the residence strata of "Geography Type" too this chart:
+
+```{r}
+
+```
+
