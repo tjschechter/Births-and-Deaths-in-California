@@ -227,3 +227,49 @@ deaths_t %>%
 
 ```
 Interestingly, we see some element of seasonality in deaths as well! There is also a massive spike following Jan 2020, which indicates the outbreak of the COVID-19 pandemic.
+
+We can also compare "Occurrence" to "Residence", similar to how we reviewed the birth data:
+
+```{r}
+
+# group by and sum up the amount of deaths by month, geo type 1970 - 2023
+deaths_sum <- deaths %>% group_by(Month, Geography_Type) %>%
+  summarise("Total Deaths" = sum(Count))
+
+# create a table to display these sums
+
+deaths_sum %>%
+  kable(caption = "Deaths by Month in CA, 1970 - 2023") %>%
+  kable_styling(full_width = FALSE,
+                position = "center",
+                latex_options = c("striped", "hold_position"))
+
+```
+
+Slightly more people have died in CA than total CA resident deaths. This leads us to believe there are some residents of other states or nations that die in California, for one reason or another.
+
+### Death Data - Granular View
+
+Deaths data from 1970 to 2023 is stratified by many more categories than births. Let us dive in...
+
+```{r}
+
+# what causes of death are described in the data?
+deaths$Cause_Desc %>% unique()
+
+```
+Quite the cheerful list... Let us see what the distribution of causes is in the data. We can create a line chart to see if the seasonality also exists across all causes of death.
+
+```{r}
+
+deaths %>% 
+  ggplot(aes(x = YearMonth, y = Count)) +
+  geom_line(aes(color = Geography_Type)) +
+  xlab("") +
+  ylab("Total Deaths") +
+  ggtitle("Deaths in California, 1970 - 2023")
+
+
+
+```
+
