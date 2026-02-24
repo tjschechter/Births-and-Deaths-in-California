@@ -189,4 +189,41 @@ births_c %>%
   ylab("Total births")
 
 ```
-The lines are almost the exact same, which, from parsing our data, is to be expected. Recall that in a previous table, we saw that the overall total of births by month (1960 - 2023) were off by approx. a few thousand each month. Therefore, it's reasonable to expect any given month of a gien year to have a much smaller difference. e.g. the difference between occurrence and residence births in Jan 1960 is 8!
+The lines are almost the exact same, which, from parsing our data, is to be expected. Recall that in a previous table, we saw that the overall total of births by month (1960 - 2023) were off by approx. a few thousand each month. Therefore, it's reasonable to expect any given month of a given year to have a much smaller difference. e.g. the difference between occurrence and residence births in Jan 1960 is 8!
+
+## Data - Deaths
+
+Let's begin exploring our aggregated deaths dataset for California.
+
+```{r}
+
+deaths <- read_csv("data/death_data_79-23.csv")
+
+```
+Let's examine total deaths, not stratified by age or cause.
+
+```{r}
+
+# let's add a similar "YearMonth" variable to the deaths data - this will allow joining on the births data
+# Should have occurred during cleaning, but we'll do this now anyways
+
+# create the requisite date/YearMonth variable
+deaths <- deaths %>% mutate(
+  YearMonth = paste(Year, Month, sep = "-") %>% as.yearmon()
+  )
+
+
+# begin by filtering deaths to "Total Population", cause == ALL
+
+deaths_t <- deaths %>% filter(Strata_Name == "Total Population" & Cause == "ALL")
+
+# create a line chart, similar to births, displaying deaths over time
+deaths_t %>%
+  ggplot(aes(x = YearMonth, y = Count)) +
+  geom_line(aes(color = Geography_Type)) +
+  xlab("") +
+  ylab("Total Deaths") +
+  ggtitle("Deaths in California, 1970 - 2023")
+
+```
+Interestingly, we see some element of seasonality in deaths as well! There is also a massive spike following Jan 2020, which indicates the outbreak of the COVID-19 pandemic.
